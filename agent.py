@@ -22,7 +22,7 @@ class QLearningAgent:
         self.epsilon = epsilon
         self.epsilon_decay = epsilon_decay
         self.epsilon_min = epsilon_min
-        self.Q = {}  # Q-table: dictionary mapping state -> {action: value}
+        self.Q = {}
 
     def _ensure_state(self, state):
         """Initialize Q-values for unseen states."""

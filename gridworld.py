@@ -83,9 +83,6 @@ class GridWorld:
             grid_colors[r, c] = [0.0, 0.0, 0.0]
             
         # Color rewards based on collection order:
-        # - Already collected: gray.
-        # - Current target: light green.
-        # - Future rewards: light blue.
         for idx, pos in enumerate(self.rewards):
             r, c = pos
             if idx < self.current_reward:
@@ -98,7 +95,7 @@ class GridWorld:
         # Display the grid
         ax.imshow(grid_colors, interpolation='none')
 
-        # Set grid lines for clarity
+        # Set grid lines
         ax.set_xticks(np.arange(-0.5, self.cols, 1), minor=True)
         ax.set_yticks(np.arange(-0.5, self.rows, 1), minor=True)
         ax.grid(which='minor', color='gray', linewidth=1)
@@ -121,13 +118,13 @@ def main():
     # Define the gridworld:
     # Walls in the grid
     walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4), (0, 6), (1, 6), (2, 6), (3, 6), (7,2), (7, 3), (5, 7), (6, 7)}
-    # Reward squares with corresponding reward values
+    # Reward squares in order of collection
     rewards = [(0,8), (6,3), (3,3)]
 
     # Initialize the environment
     env = GridWorld(grid_size=(10, 10), walls=walls, rewards=rewards, start=(0, 0))
     
-    # Enable interactive mode and create a figure and axis once.
+    # Enable interactive mode and create a figure and axis.
     plt.ion()
     fig, ax = plt.subplots(figsize=(10, 10))
     env.render_plot(ax)
