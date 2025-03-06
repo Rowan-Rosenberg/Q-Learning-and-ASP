@@ -4,22 +4,22 @@ Options include training the agent, loading a trained model, rendering the model
 Written by: Rowan Rosenberg March 2025
 """
 
-
 import matplotlib.pyplot as plt
 from agent import QLearningAgent
 from gridworld import GridWorld
 
+def create_environment():
+    """ Creates and returns a new instance of the GridWorld with predefined parameters."""
+    walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4),
+             (0, 6), (1, 6), (2, 6), (3, 6), (7, 2), (7, 3), (5, 7), (6, 7)}
+    rewards = [(0, 8), (6, 3), (3, 3)]
+    return GridWorld(grid_size=(10, 10), walls=walls, rewards=rewards, start=(0, 0))
+
 def train_agent(num_episodes=500, max_steps=100):
     actions = ['up', 'down', 'left', 'right']
     agent = QLearningAgent(actions)
-    
-    # Define gridworld parameters.
-    # Walls in the grid
-    walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4), (0, 6), (1, 6), (2, 6), (3, 6), (7,2), (7, 3), (5, 7), (6, 7)}
-    # Reward squares with corresponding reward values
-    rewards = [(0,8), (6,3), (3,3)]
 
-    env = GridWorld(grid_size=(10, 10), walls=walls, rewards=rewards, start=(0, 0))
+    env = create_environment()
     
     for episode in range(num_episodes):
         state = env.reset()
@@ -44,13 +44,7 @@ def render_trained_model(model_filename="q_learning_model.pkl", max_steps=100, d
     # Set epsilon to 0 for purely greedy behavior.
     agent.epsilon = 0.0
 
-    # Define gridworld parameters (these must match your training settings).
-    walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4),
-             (0, 6), (1, 6), (2, 6), (3, 6), (7, 2), (7, 3), (5, 7), (6, 7)}
-    rewards = [(0, 8), (6, 3), (3, 3)]  # Rewards must be collected in order.
-    env = GridWorld(grid_size=(10, 10), walls=walls, rewards=rewards, start=(0, 0))
-    
-    # Reset the environment; state is augmented (position, current_reward_index)
+    env = create_environment()
     state = env.reset()
     
     # Set up interactive mode and create a non-blocking plot window.
@@ -67,10 +61,9 @@ def render_trained_model(model_filename="q_learning_model.pkl", max_steps=100, d
         state, reward, done = env.step(action)
         print(f"Step {step+1}: Action = {action}, State = {state}, Reward = {reward}, Done = {done}")
         env.render_plot(ax)
-        plt.pause(delay)  # Pause to allow the plot to update and be observed.
+        plt.pause(delay)  
         step += 1
 
-    # Turn off interactive mode and keep the final plot open.
     plt.ioff()
     plt.show()
 
