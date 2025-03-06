@@ -1,5 +1,5 @@
 """ 
-Simple gridworld environment with matplotlib visualization fpr machine learning.
+Simple gridworld environment with matplotlib visualization for machine learning.
 The main function allows for testing the environment.
 Written by: Rowan Rosenberg March 2025
 """

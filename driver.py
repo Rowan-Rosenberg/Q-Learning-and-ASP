@@ -1,3 +1,10 @@
+"""
+Driver script for training a Q-learning agent to solve a gridworld problem.
+Options include training the agent, loading a trained model, rendering the model, and printing the Q-table.
+Written by: Rowan Rosenberg March 2025
+"""
+
+
 import matplotlib.pyplot as plt
 from agent import QLearningAgent
 from gridworld import GridWorld

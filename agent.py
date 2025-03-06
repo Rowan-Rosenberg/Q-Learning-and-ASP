@@ -1,3 +1,8 @@
+"""
+Q-learning agent for the gridworld environment.
+Written by: Rowan Rosenberg March 2025
+"""
+
 import random
 import pickle
 
