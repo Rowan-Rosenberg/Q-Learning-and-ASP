@@ -72,7 +72,7 @@ def print_q_table(agent):
     for state, action_values in agent.Q.items():
         print(f"State {state}:")
         for action, q_value in action_values.items():
-            print(f"  {action}: {q_value:.2f}")
+            print(f"  {action}: {q_value:.4f}")
     print()
 
 def main():
@@ -97,8 +97,11 @@ def main():
             loaded_agent.load(model_filename)
             render_trained_model(model_filename)
         elif action == "3":
+            # Load the trained model from the file.
+            loaded_agent = QLearningAgent(actions=['up', 'down', 'left', 'right'])
+            loaded_agent.load(model_filename)
             # Print the Q-table of the trained agent.
-            print_q_table(trained_agent)
+            print_q_table(loaded_agent)
         elif action == "4":
             exit = True
         else:
