@@ -30,9 +30,7 @@ class QLearningAgent:
             self.Q[state] = {a: 0.0 for a in self.actions}
 
     def choose_action(self, state):
-        """
-        Choose an action using an epsilon-greedy strategy.
-        """
+        """ Choose an action using an epsilon-greedy strategy."""
         self._ensure_state(state)
         if random.random() < self.epsilon:
             return random.choice(self.actions)
@@ -43,9 +41,7 @@ class QLearningAgent:
             return random.choice(best_actions)
 
     def learn(self, state, action, reward, next_state, done):
-        """
-        Update the Q-table using the Q-learning update rule.
-        """
+        """ Update the Q-table using the Q-learning update rule."""
         self._ensure_state(state)
         self._ensure_state(next_state)
         current_Q = self.Q[state][action]
