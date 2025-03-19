@@ -33,18 +33,21 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
         f.write("row(0..Rmax-1) :- grid_size(Rmax, _).\n")
         f.write("col(0..Cmax-1) :- grid_size(_, Cmax).\n")
 
+        # Write action definitions
         f.write("\n% Define possible actions.\n")
         f.write("action(up).\n")
         f.write("action(down).\n")
         f.write("action(left).\n")
         f.write("action(right).\n")
 
+        # Write rules for bounds checking
         f.write("\n% Define when a move is possible.\n")
         f.write("can_move(R, C, up)    :- row(R), col(C), R > 0.\n")
         f.write("can_move(R, C, down)  :- row(R), col(C), grid_size(Rmax, _), R < Rmax - 1.\n")
         f.write("can_move(R, C, left)  :- row(R), col(C), C > 0.\n")
         f.write("can_move(R, C, right) :- row(R), col(C), grid_size(_, Cmax), C < Cmax - 1.\n")
 
+        # Write rules for moving in each direction
         f.write("\n% Define next_position for valid moves.\n")
         f.write("next_position(R, C, up, Rnew, C) :-\n")
         f.write("can_move(R, C, up),\n")
@@ -62,6 +65,7 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
         f.write("can_move(R, C, right),\n")
         f.write("Cnew = C + 1.\n")
 
+        # Write rule for staying in place if move is not possible
         f.write("\n% If a move is not possible, the agent stays in place.\n")
         f.write("next_position(R, C, A, R, C) :-\n")
         f.write("row(R), col(C), action(A),\n")
@@ -69,7 +73,7 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
                 
         # Write Q-table as facts.
         # Each key in the Q-table is a state, represented as ((row, col), reward_count)
-        f.write("% Q-table\n")
+        f.write("\n% Q-table\n")
         for state, action_dict in data["q_table"].items():
             # Unpack state: expected to be ((row, col), reward_count)
             pos, reward_count = state
@@ -79,9 +83,13 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
                 scaled_value = int(round(q_value * 10000))
                 f.write(f"q_value({r}, {c}, {reward_count}, {action}, {scaled_value}).\n")
         f.write("\n")
+
+        # Define states based on existing Q-values.
+        f.write("% Define state based on existing Q-values\n")
+        f.write("state(R, C, RC) :- q_value(R, C, RC, _, _).\n")
         
          # Compute the maximum Q-value for each state using an aggregate.
-        f.write("% For each state, compute the maximum Q-value\n")
+        f.write("\n% For each state, compute the maximum Q-value\n")
         f.write("max_q_value(R, C, RC, Max) :- state(R, C, RC), Max = #max { Q, A : q_value(R, C, RC, A, Q) }.\n\n")
         
         # Define best actions: those whose Q-value equals the maximum for their state.
@@ -93,8 +101,36 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
         f.write("% For each state, choose exactly one best action (if tied, one is chosen arbitrarily)\n")
         f.write("{ chosen_action(R, C, RC, A) : best_action(R, C, RC, A) } = 1 :- state(R, C, RC).\n")
 
+        # Define the next state when reward is collected
+        f.write("\n% Compute next state considering rewards and walls, where there is a reward found\n")
+        f.write("next_state(Rnew, Cnew, RC + 1) :-\n")
+        f.write("current_state(R, C, RC),\n")
+        f.write("chosen_action(R, C, RC, A),\n")
+        f.write("next_position(R, C, A, Rnew, Cnew),\n")
+        f.write("not wall(Rnew, Cnew),\n")
+        f.write("reward(RC, Rnew, Cnew).\n")
+
+        # Define the next state when no reward is collected
+        f.write("\n% Compute next state considering rewards and walls, where there is no reward found\n")
+        f.write("next_state(Rnew, Cnew, RC) :-\n")
+        f.write("current_state(R, C, RC),\n")
+        f.write("chosen_action(R, C, RC, A),\n")
+        f.write("next_position(R, C, A, Rnew, Cnew),\n")
+        f.write("not wall(Rnew, Cnew),\n")
+        f.write("not reward(RC, Rnew, Cnew).\n")
+
+        # Define the next state when the agent hits a wall
+        f.write("\n% If the move hits a wall, stay in the current state\n")
+        f.write("next_state(R, C, RC) :-\n")
+        f.write("current_state(R, C, RC),\n")
+        f.write("chosen_action(R, C, RC, A),\n")
+        f.write("next_position(R, C, A, Rtemp, Ctemp),\n")
+        f.write("wall(Rtemp, Ctemp).\n")
+        f.write("\n#show next_state/3.\n")
+
         # Define space for user entered ASP
-        f.write("\n\n% ----------- Enter your own ASP rules here ------------- \n\n")
+        f.write("\n\n% ----------- Enter the current state here ------------- \n\n")
+        f.write("current_state(0, 0, 0).\n")
 
     print(f"ASP representation exported to '{output_filename}'")
 
