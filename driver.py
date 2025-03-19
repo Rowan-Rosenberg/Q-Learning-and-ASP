@@ -1,6 +1,6 @@
 """
 Driver script for training a Q-learning agent to solve a gridworld problem.
-Options include training the agent, loading a trained model, rendering the model, and printing the Q-table.
+Options include training the agent, loading a trained model, rendering the model, printing the Q-table, and storing an environment/model combination.
 Written by: Rowan Rosenberg March 2025
 """
 

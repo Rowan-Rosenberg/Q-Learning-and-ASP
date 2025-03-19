@@ -141,7 +141,7 @@ def main():
             print(e)
         
         if done:
-            print("Episode finished!")
+            print("Episode finished")
             break
 
     plt.ioff()
