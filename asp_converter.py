@@ -41,6 +41,19 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
                 f.write(f"q_value({r}, {c}, {reward_count}, {action}, {q_value:.4f}).\n")
         f.write("\n")
         
+         # Compute the maximum Q-value for each state using an aggregate.
+        f.write("% For each state, compute the maximum Q-value\n")
+        f.write("max_q_value(R, C, RC, Max) :- state(R, C, RC), Max = #max { Q, A : q_value(R, C, RC, A, Q) }.\n\n")
+        
+        # Define best actions: those whose Q-value equals the maximum for their state.
+        f.write("% Define best actions as those achieving the maximum Q-value\n")
+        f.write("best_action(R, C, RC, A) :- q_value(R, C, RC, A, Q), max_q_value(R, C, RC, Q).\n\n")
+        
+        # Use a choice rule to select exactly one best action per state.
+        # When multiple best actions exist, one is selected arbitrarily.
+        f.write("% For each state, choose exactly one best action (if tied, one is chosen arbitrarily)\n")
+        f.write("{ chosen_action(R, C, RC, A) : best_action(R, C, RC, A) } = 1 :- state(R, C, RC).\n")
+        
     print(f"ASP representation exported to '{output_filename}'")
 
 def main():
