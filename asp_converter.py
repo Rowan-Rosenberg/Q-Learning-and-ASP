@@ -27,7 +27,46 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
         for idx, reward in enumerate(data["rewards"]):
             f.write(f"reward({idx}, {reward[0]}, {reward[1]}).\n")
         f.write("\n")
-        
+
+        # Write movement rules
+        f.write("\n% Define row and column domains based on grid_size.\n")
+        f.write("row(0..Rmax-1) :- grid_size(Rmax, _).\n")
+        f.write("col(0..Cmax-1) :- grid_size(_, Cmax).\n")
+
+        f.write("\n% Define possible actions.\n")
+        f.write("action(up).\n")
+        f.write("action(down).\n")
+        f.write("action(left).\n")
+        f.write("action(right).\n")
+
+        f.write("\n% Define when a move is possible.\n")
+        f.write("can_move(R, C, up)    :- row(R), col(C), R > 0.\n")
+        f.write("can_move(R, C, down)  :- row(R), col(C), grid_size(Rmax, _), R < Rmax - 1.\n")
+        f.write("can_move(R, C, left)  :- row(R), col(C), C > 0.\n")
+        f.write("can_move(R, C, right) :- row(R), col(C), grid_size(_, Cmax), C < Cmax - 1.\n")
+
+        f.write("\n% Define next_position for valid moves.\n")
+        f.write("next_position(R, C, up, Rnew, C) :-\n")
+        f.write("can_move(R, C, up),\n")
+        f.write("Rnew = R - 1.\n")
+
+        f.write("next_position(R, C, down, Rnew, C) :-\n")
+        f.write("can_move(R, C, down),\n")
+        f.write("Rnew = R + 1.\n")
+
+        f.write("next_position(R, C, left, R, Cnew) :-\n")
+        f.write("can_move(R, C, left),\n")
+        f.write("Cnew = C - 1.\n")
+
+        f.write("next_position(R, C, right, R, Cnew) :-\n")
+        f.write("can_move(R, C, right),\n")
+        f.write("Cnew = C + 1.\n")
+
+        f.write("\n% If a move is not possible, the agent stays in place.\n")
+        f.write("next_position(R, C, A, R, C) :-\n")
+        f.write("row(R), col(C), action(A),\n")
+        f.write("not can_move(R, C, A).\n")
+                
         # Write Q-table as facts.
         # Each key in the Q-table is a state, represented as ((row, col), reward_count)
         f.write("% Q-table\n")
@@ -36,9 +75,9 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
             pos, reward_count = state
             r, c = pos
             for action, q_value in action_dict.items():
-                # In ASP we represent the action as an atom; note that actions are strings.
-                # Q-values are output as a float formatted to four decimals.
-                f.write(f"q_value({r}, {c}, {reward_count}, {action}, {q_value:.4f}).\n")
+                # Scale the floating point value and convert it to an integer.
+                scaled_value = int(round(q_value * 10000))
+                f.write(f"q_value({r}, {c}, {reward_count}, {action}, {scaled_value}).\n")
         f.write("\n")
         
          # Compute the maximum Q-value for each state using an aggregate.
