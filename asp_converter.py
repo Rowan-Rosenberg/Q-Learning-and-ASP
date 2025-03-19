@@ -53,7 +53,10 @@ def generate_asp(data, output_filename="asp_representation.lp", grid_size=(10, 1
         # When multiple best actions exist, one is selected arbitrarily.
         f.write("% For each state, choose exactly one best action (if tied, one is chosen arbitrarily)\n")
         f.write("{ chosen_action(R, C, RC, A) : best_action(R, C, RC, A) } = 1 :- state(R, C, RC).\n")
-        
+
+        # Define space for user entered ASP
+        f.write("\n\n% ----------- Enter your own ASP rules here ------------- \n\n")
+
     print(f"ASP representation exported to '{output_filename}'")
 
 def main():
