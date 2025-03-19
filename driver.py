@@ -7,6 +7,7 @@ Written by: Rowan Rosenberg March 2025
 import matplotlib.pyplot as plt
 from agent import QLearningAgent
 from gridworld import GridWorld
+import pickle
 
 def create_environment():
     """ Creates and returns a new instance of the GridWorld with predefined parameters."""
@@ -75,6 +76,24 @@ def print_q_table(agent):
             print(f"  {action}: {q_value:.4f}")
     print()
 
+def export_environment_and_q_table(agent, env, filename="exported_model.pkl"):
+    """
+    Exports the gridworld's environment configuration (wall and reward positions)
+    along with the agent's Q-table into a file.
+    """
+    # Prepare export data; converting walls to list
+    export_data = {
+        "walls": list(env.walls),
+        "rewards": env.rewards,
+        "q_table": agent.Q
+    }
+    
+    # Write the data to the file using pickle.
+    with open(filename, "wb") as f:
+        pickle.dump(export_data, f)
+    
+    print(f"Environment and Q-table exported to {filename}")
+
 def main():
 
     model_filename = "q_learning_model.pkl"
@@ -82,7 +101,7 @@ def main():
     
     while not exit:
 
-        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Exit \n")
+        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Export model an Q-table \n 5. Exit \n")
 
         if action == "1":
             # Train the agent.
@@ -103,6 +122,14 @@ def main():
             # Print the Q-table of the trained agent.
             print_q_table(loaded_agent)
         elif action == "4":
+            # Create the environment instance
+            env = create_environment()
+            # Load the trained model from the file.
+            loaded_agent = QLearningAgent(actions=['up', 'down', 'left', 'right'])
+            loaded_agent.load(model_filename)
+            # Save the Q-table and environment
+            export_environment_and_q_table(trained_agent, env, filename="env_and_model.pkl")
+        elif action == "5":
             exit = True
         else:
             print("Invalid option. Please try again.")
