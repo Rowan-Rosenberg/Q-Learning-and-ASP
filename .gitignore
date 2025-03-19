@@ -1,3 +1,4 @@
 /q_learning_model.pkl
 /__pycache__
-asp_representation.lp
+/asp_representation.lp
+/env_and_model.pkl
