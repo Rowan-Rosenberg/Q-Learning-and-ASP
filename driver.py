@@ -10,7 +10,7 @@ from gridworld import GridWorld
 import pickle
 
 def create_environment():
-    """ Creates and returns a new instance of the GridWorld with predefined parameters."""
+    # Creates and returns a new instance of the GridWorld with predefined parameters.
     walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4),
              (0, 6), (1, 6), (2, 6), (3, 6), (7, 2), (7, 3), (5, 7), (6, 7)}
     rewards = [(0, 8), (6, 3), (3, 3)]
@@ -77,10 +77,6 @@ def print_q_table(agent):
     print()
 
 def export_environment_and_q_table(agent, env, filename="exported_model.pkl"):
-    """
-    Exports the gridworld's environment configuration (wall and reward positions)
-    along with the agent's Q-table into a file.
-    """
     # Prepare export data; converting walls to list
     export_data = {
         "walls": list(env.walls),
@@ -101,7 +97,7 @@ def main():
     
     while not exit:
 
-        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Export model an Q-table \n 5. Exit \n")
+        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Export model and Q-table \n 5. Exit \n")
 
         if action == "1":
             # Train the agent.

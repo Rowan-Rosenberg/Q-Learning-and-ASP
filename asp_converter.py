@@ -139,7 +139,7 @@ class Writer:
 def main():
     # Load the model and environment data from the pickle file.
     data = load_data("env_and_model.pkl")
-    # Generate the ASP representation of the data.
+    # Generate the ASP representation of the data. Add gridsize parameter if not 10x10
     generate_asp(data)
 
 if __name__ == "__main__":

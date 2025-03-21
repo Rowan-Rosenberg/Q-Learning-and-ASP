@@ -115,7 +115,6 @@ class GridWorld:
 
 
 def main():
-    # Define the gridworld:
     # Walls in the grid
     walls = {(1, 2), (2, 1), (2, 2), (5, 0), (5, 2), (5, 3), (5, 4), (0, 6), (1, 6), (2, 6), (3, 6), (7,2), (7, 3), (5, 7), (6, 7)}
     # Reward squares in order of collection
