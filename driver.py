@@ -97,7 +97,7 @@ def main():
     
     while not exit:
 
-        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Export model and Q-table \n 5. Exit \n")
+        action = input("Choose an option: \n 1. Train the agent and save \n 2. Load the trained model and render it \n 3. Print the model Q-table \n 4. Export environment and Q-table \n 5. Exit \n")
 
         if action == "1":
             # Train the agent.
